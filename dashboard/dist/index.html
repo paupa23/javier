@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Auditoría de ventas · 5074</title><meta name="description" content="Ingresos por categoría y trazabilidad de ventas del 1 al 7 de octubre de 2026."><link rel="stylesheet" href="estilos.css"><script type="module" src="app.js"></script></head>
+<body>
+  <header><a class="marca" href="./"><span class="simbolo">V</span> Ventas / <strong>Auditoría</strong></a><span class="etiqueta">PRÁCTICA 5074 · DATOS SINTÉTICOS</span></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">DEL DATO A LA DECISIÓN</p><h1>Una semana de ventas,<br>con cifras verificadas.</h1><p class="subtitulo">¿Qué categorías generan más ingresos?</p></div><div class="periodo"><span>PERIODO ANALIZADO</span><strong id="periodo">Cargando…</strong><small id="generado"></small></div></div>
+    <p id="estado" role="status">Leyendo resultados de la auditoría…</p>
+    <section class="metricas" aria-label="Indicadores principales">
+      <article class="card principal"><span>Ingresos totales</span><strong id="ingresos">—</strong><small>Unidades × precio histórico · EUR</small></article>
+      <article class="card"><span>Operaciones válidas</span><strong id="operaciones">—</strong><small>Una copia por operación</small></article>
+      <article class="card"><span>Unidades vendidas</span><strong id="unidades">—</strong><small>Solo ventas validadas</small></article>
+    </section>
+    <div class="paneles"><section class="panel"><div class="titulo-panel"><div><p class="eyebrow">DISTRIBUCIÓN DE INGRESOS</p><h2>Ingresos por categoría</h2></div><span class="etiqueta">EUR</span></div><div id="barras" class="barras" role="img" aria-label="Cargando gráfica"></div><p class="nota">Las barras comparten una escala desde cero para comparar categorías. Los importes y porcentajes se calculan desde el resumen.</p></section>
+    <section class="panel calidad"><p class="eyebrow">CONTROL DE CALIDAD</p><h2>Cada fila cuenta.</h2><p>La validación precede al cálculo de las métricas.</p><dl><div><dt>Filas de entrada</dt><dd id="entrada">—</dd></div><div><dt>Copias excluidas</dt><dd id="duplicadas">—</dd></div><div><dt>Incidencias excluidas</dt><dd id="incidencias">—</dd></div></dl><p class="balance" id="balance"></p><div class="descargas"><a href="datos/resumen.json" download>Descargar resumen ↗</a><a href="datos/calidad.json" download>Descargar auditoría ↗</a></div></section></div>
+    <section class="panel trazabilidad"><div class="titulo-panel"><div><p class="eyebrow">TRAZABILIDAD</p><h2>Registros excluidos</h2></div><button id="imprimir" type="button">Imprimir / guardar PDF</button></div><div class="tabla"><table><caption>Copias e incidencias, con la fila original del CSV</caption><thead><tr><th>Operación</th><th>Fila CSV</th><th>Tipo</th><th>Motivo</th></tr></thead><tbody id="excluidos"></tbody></table></div></section>
+    <footer><span>Fuentes sintéticas: ventas.csv + productos.json</span><span>Proceso local por lotes · Actualización al regenerar y publicar</span></footer>
+  </main>
+</body></html>

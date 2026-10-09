@@ -1,0 +1,10 @@
+{
+  "name": "auditoria-ventas-5074",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "procesar": "node scripts/procesar.mjs",
+    "test": "node --test",
+    "start": "node scripts/servir.mjs"
+  }
+}
