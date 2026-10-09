@@ -26,6 +26,7 @@ test('Dos ejecuciones generan iguales métricas, recuentos y copias servidas', a
   assert.deepEqual(primera, segunda);
   for (const nombre of ['resumen', 'calidad', 'ventas_enriquecidas']) {
     assert.equal(await readFile(new URL(`salida/${nombre}.json`, raiz), 'utf8'), await readFile(new URL(`dashboard/dist/datos/${nombre}.json`, raiz), 'utf8'));
+    assert.equal(await readFile(new URL(`salida/${nombre}.json`, raiz), 'utf8'), await readFile(new URL(`public/datos/${nombre}.json`, raiz), 'utf8'));
   }
 });
 test('Conflictos excluyen también versiones anteriores y sus copias', () => {

@@ -3,8 +3,22 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node scripts/procesar.mjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/procesar.mjs",
+    "build": "next build",
     "procesar": "node scripts/procesar.mjs",
     "test": "node --test",
-    "start": "node scripts/servir.mjs"
+    "test:ui": "playwright test",
+    "start": "next start",
+    "preview:html": "node scripts/servir.mjs"
+  },
+  "dependencies": {
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
   }
 }

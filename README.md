@@ -4,15 +4,22 @@ Pregunta: ¿qué categorías generan más ingresos entre el 1 y el 7 de octubre 
 
 ## Ejecución
 
-Requiere Node.js, sin dependencias externas. Desde la raíz:
+La aplicación está hecha con **React 19 y Next.js 16 (App Router)**. Requiere Node.js 20.9 o posterior. El script de procesamiento sigue usando solo módulos nativos de Node. Desde la raíz:
 
 ```text
-node scripts/procesar.mjs
-node --test
-node scripts/servir.mjs
+npm.cmd install
+npm.cmd run dev
 ```
 
-Abre http://127.0.0.1:3000. También existen los comandos `npm run procesar`, `npm test` y `npm start`. Si PowerShell bloquea `npm.ps1`, usa `npm.cmd` o los comandos Node anteriores.
+Abre http://localhost:3000. `npm run dev` procesa las fuentes antes de arrancar Next.js. Para comprobar y ejecutar la versión de producción:
+
+```text
+npm.cmd test
+npm.cmd run build
+npm.cmd start
+```
+
+`npm run build` vuelve a generar los informes antes de compilar Next.js. En PowerShell se usa `npm.cmd` si la política de ejecución bloquea `npm.ps1`. En otros terminales basta `npm`.
 
 Los archivos entregados originalmente permanecen intactos en la raíz, incluido el script inicial `procesar.mjs.js`. La implementación completa está en `scripts/procesar.mjs`; no se debe ejecutar el script inicial, cuya ubicación no corresponde a las rutas del enunciado. Se han copiado las fuentes, sin cambios, a `datos/`, que es la entrada del proceso.
 
@@ -72,19 +79,25 @@ Como contraste independiente del total, los 60 registros válidos contienen 7 ci
 
 `node --test` supera seis pruebas: resultados y filas concretas, dos ejecuciones completas con igualdad de resultados salvo fecha, conflictos con versiones anteriores, IDs distintos y precio cero, errores de campos/fechas/números/referencias y catálogo ambiguo/CSV mal formado. También comprueba que los JSON servidos son idénticos a los de salida.
 
-No se ha realizado una revisión con un compañero ni se atribuye una revisión inexistente. La captura y la revisión visual en navegador quedan pendientes si no hay navegador disponible.
+`npm run build` compila correctamente la aplicación Next.js. `npm run test:ui` ejecuta Playwright sobre esa compilación en dos tamaños (escritorio y móvil), usando Microsoft Edge instalado. Comprueba métricas, filtros, búsqueda, ordenación, selección de días, persistencia del modo oscuro, descarga del resumen, ausencia de errores JavaScript y ausencia de desbordamiento de la página. Las dos pruebas han pasado. Para repetirlas, ejecutar primero `npm run build`; si Edge no está instalado, cambiar el canal en `playwright.config.mjs` por un navegador disponible.
+
+Las capturas de la nueva aplicación local están en `evidencias/dashboard-desktop.png` y `evidencias/dashboard-mobile.png`. La captura del enlace público debe hacerse después de desplegar la nueva versión en Vercel.
+
+No se ha realizado una revisión con un compañero ni se atribuye una revisión inexistente.
 
 ## Dashboard y actualización
 
-`dashboard/dist/index.html` carga `datos/resumen.json` y `datos/calidad.json` mediante fetch. Las cards, barras, periodo, fecha, exclusiones y tabla se construyen desde esos JSON. No contienen cifras de resultados escritas a mano. Se usa la zona Europe/Madrid para mostrar la fecha de generación. Las barras horizontales tienen base cero y escala compartida; permiten comparar importes y leer los nombres de las categorías.
+`app/page.jsx` es la página de Next.js: lee los tres JSON de `salida/` durante la compilación y pasa los datos al componente React `app/components/Dashboard.jsx`. `app/layout.jsx` define el documento y sus metadatos; `app/globals.css` contiene el diseño adaptable. Las cards, gráficas, periodo, fecha, exclusiones y tabla proceden de esos JSON, sin resultados escritos a mano. Se usa Europe/Madrid para mostrar la fecha de generación. Las barras horizontales tienen base cero y escala compartida para comparar categorías.
 
-El procesamiento guarda por separado `salida/resumen.json`, `salida/calidad.json` y `salida/ventas_enriquecidas.json`. En la misma ejecución copia los tres a `dashboard/dist/datos/`. El último listado permite rastrear cada ingreso hasta su ID y fila CSV. Los importes de resumen se redondean a dos decimales al agregar; en estas fuentes todos los ingresos son enteros.
+La interfaz incluye contadores y barras animados, transiciones de entrada, modo claro/oscuro persistente, ordenación de categorías, ingresos por día seleccionables, búsqueda por ID/fila/motivo y filtros de duplicados e incidencias. Las animaciones respetan `prefers-reduced-motion`. La exportación abre la impresión del navegador, con estilos para guardar el informe en PDF. Las descargas JSON se sirven desde `public/datos/`, situado en la raíz de Next.js.
 
-Para incorporar nuevas ventas: actualizar las fuentes en `datos/`, ejecutar `node scripts/procesar.mjs`, ejecutar `node --test` adaptando los valores esperados si ha cambiado la muestra, revisar incidencias y publicar la carpeta actualizada. En local basta recargar el dashboard. En una publicación hay que desplegar de nuevo; no hay streaming ni ingesta continua. Las fechas fuera del 1–7 de octubre quedan excluidas mientras no se cambie explícitamente el periodo.
+El procesamiento guarda por separado `salida/resumen.json`, `salida/calidad.json` y `salida/ventas_enriquecidas.json`. En la misma ejecución copia los tres a `public/datos/` y, por compatibilidad, al dashboard HTML anterior. El último listado permite rastrear cada ingreso hasta su ID y fila CSV. Los importes se redondean a dos decimales al agregar; en estas fuentes todos los ingresos son enteros.
 
-Para Vercel: importar el repositorio, dejar Root Directory en la raíz (`.`) y seleccionar «Other» como framework. El archivo `vercel.json` de la raíz configura el comando `node scripts/procesar.mjs` y la salida `dashboard/dist`. Así Vercel sirve el dashboard en `/` y el proceso accede directamente a `scripts/` y `datos/`. Tras subir la configuración a GitHub y desplegar, comprobar que el resumen servido en `/datos/resumen.json` coincide con `salida/resumen.json` y capturar la pantalla. La configuración `dashboard/vercel.json` solo se aplica si se elige `dashboard` como Root Directory; para esta publicación se utiliza la raíz.
+Para incorporar nuevas ventas: actualizar las fuentes en `datos/`, ejecutar el procesamiento y las pruebas (adaptando los valores esperados si cambia la muestra), revisar incidencias y ejecutar `npm run build`. En desarrollo, reiniciar `npm run dev` para regenerar las fuentes y la página. En producción, subir los cambios a GitHub y desplegar de nuevo: la página se genera en la compilación, por lo que recargar sin recompilar no incorpora nuevas fuentes. No hay streaming ni ingesta continua. Las fechas fuera del 1–7 de octubre quedan excluidas mientras no se cambie explícitamente el periodo.
 
-Se ha publicado y confirmado una vista privada en Sites: https://auditoria-ventas-javier-5074.kromschroede-2653.chatgpt.site. El archivo `dashboard/.openai/hosting.json` conserva su identidad. El historial Git de `dashboard/` pertenece a esa publicación de Sites y solo contiene el dashboard; para la entrega de GitHub hay que incluir también las fuentes, el proceso, las salidas y la documentación de la raíz. No se ha verificado visualmente la publicación ni se ha generado una captura. La confirmación del despliegue y las comprobaciones HTTP locales son las evidencias disponibles.
+Para Vercel: dejar Root Directory en la raíz (`.`), seleccionar **Next.js** como framework y Build Command `npm run build`. Desactivar cualquier override anterior de Output Directory (`dist` o `dashboard/dist`): debe usarse el valor predeterminado de Next.js. `vercel.json` ya declara `framework: nextjs` y el comando de compilación. Tras subir los cambios y desplegar, comprobar `/` y `/datos/resumen.json` y capturar las cards, gráficas y balance. El enlace del proyecto es https://javier-rouge.vercel.app/; la nueva versión React requiere desplegar estos cambios.
+
+`dashboard/` y `scripts/servir.mjs` conservan la versión HTML inicial como referencia; no son la aplicación Next.js ni deben seleccionarse como raíz en Vercel. La vista privada anterior de Sites conserva ese diseño inicial. El repositorio de entrega es https://github.com/paupa23/javier.
 
 ## Limitaciones y entrega
 

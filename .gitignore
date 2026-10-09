@@ -1,4 +1,10 @@
 
 **/.git-sites-backup/
+node_modules/
+.next/
+out/
+.vercel/
+test-results/
+playwright-report/
 dashboard-site.tar.gz
 

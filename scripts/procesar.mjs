@@ -94,10 +94,11 @@ export async function ejecutar() {
     readFile(new URL('datos/productos.json', raiz), 'utf8'),
   ]);
   const { resumen, calidad, validas } = procesar(leerCSV(texto), JSON.parse(catalogo));
-  for (const carpeta of ['salida/', 'dashboard/dist/datos/']) await mkdir(new URL(carpeta, raiz), { recursive: true });
+  for (const carpeta of ['salida/', 'public/datos/', 'dashboard/dist/datos/']) await mkdir(new URL(carpeta, raiz), { recursive: true });
   for (const [nombre, resultado] of Object.entries({ resumen, calidad, ventas_enriquecidas: validas })) {
     await writeFile(new URL(`salida/${nombre}.json`, raiz), JSON.stringify(resultado, null, 2) + '\n');
     await copyFile(new URL(`salida/${nombre}.json`, raiz), new URL(`dashboard/dist/datos/${nombre}.json`, raiz));
+    await copyFile(new URL(`salida/${nombre}.json`, raiz), new URL(`public/datos/${nombre}.json`, raiz));
   }
   console.log(JSON.stringify({ resumen, balance: `${calidad.filas_entrada} = ${validas.length} + ${calidad.copias_duplicadas_excluidas} + ${calidad.incidencias_excluidas}` }, null, 2));
   return { resumen, calidad, validas };
