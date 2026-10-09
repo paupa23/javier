@@ -1,0 +1,5 @@
+{
+  "buildCommand": "node scripts/procesar.mjs",
+  "outputDirectory": "dashboard/dist",
+  "framework": null
+}
